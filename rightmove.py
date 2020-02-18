@@ -91,10 +91,7 @@ def main():
 
             bed_count = int(item.find_element_by_class_name('propertyCard-link').text.split('bed')[0])
 
-            is_in_budget = True if in_budget(bed_count, max_price, monthly_rent) else False
-
-            if is_in_budget: ## Dont bother collecting data on properties out of budget
-
+            if in_budget(bed_count, max_price, monthly_rent) ## Dont bother collecting data on properties out of budget
                 fulladdress = item.find_element_by_class_name('propertyCard-address').text
                 addr, postcode = address_parser(fulladdress)
                 floorplan = floorplan_available(link)
@@ -103,7 +100,6 @@ def main():
                 agentname = item.find_element_by_class_name('propertyCard-branchLogo-link').get_attribute('title')
                 agentnumber = item.find_element_by_class_name('propertyCard-contactsPhoneNumber').text
                 agent = {'name':agentname, 'telephone':agentnumber}
-
 
                 prop = Property(bed_count, monthly_rent, link, agent, addr, postcode, floorplan)
                 properties.append(prop.serialize())
