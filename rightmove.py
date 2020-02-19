@@ -6,26 +6,31 @@ from property_class import Property
 from selenium import webdriver
 
 def in_budget(bed_count, max_per_person, total_rent):
-    if total_rent <= bed_count * max_per_person:
+    actual_maximum = bed_count * max_per_person
+    if actual_maximum * 0.85 < total_rent <= actual_maximum:
         return True
 
-def closest_is_higherprice(number):
+def closest_is_higherprice(number, the_list='prices'):
     '''This function takes a number input and returns from a list of
     numbers the one which is closest yet still more positive.'''
     pricelist = [100,150,200,250,300,350,400,450,500,600,700,
                 800,900,1000,1100,1200,1250,1300,1400,1500,
                 1750,2000,2250,2500,2750,3000,3500,4000,4500,
                 5000,5500,6000]
-    if number <= pricelist[0]:
-        return pricelist[0]
-    elif number > pricelist[-1]:
+    miles = [0.25,0.5,3,5]
+
+    my_list = pricelist if the_list == 'prices' else miles
+
+    if number <= my_list[0]:
+        return my_list[0]
+    elif number > my_list[-1]:
         return None
     else:
-        diffs = [number - price for price in pricelist]
+        diffs = [number - price for price in my_list]
         for difference in diffs:
             if difference <= 0:
                 idx = diffs.index(difference)
-                return pricelist[idx]
+                return my_list[idx]
 
 def get_search_url():
     ## Get some inputs
@@ -91,7 +96,7 @@ def main():
 
             bed_count = int(item.find_element_by_class_name('propertyCard-link').text.split('bed')[0])
 
-            if in_budget(bed_count, max_price, monthly_rent) ## Dont bother collecting data on properties out of budget
+            if in_budget(bed_count, max_price, monthly_rent): ## Dont bother collecting data on properties out of budget
                 fulladdress = item.find_element_by_class_name('propertyCard-address').text
                 addr, postcode = address_parser(fulladdress)
                 floorplan = floorplan_available(link)
@@ -111,9 +116,10 @@ def main():
 
     ## Write our data to a json file.
     with open('scraped_data.json','w') as f:
-        data = {}
+        data = {'ResultCount':len(properties)}
         data['Properties'] = properties
         json.dump(data, f, sort_keys=True, indent=4)
+
 
 
 if __name__ == '__main__':
