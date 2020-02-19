@@ -7,7 +7,7 @@ from selenium import webdriver
 
 def in_budget(bed_count, max_per_person, total_rent):
     actual_maximum = bed_count * max_per_person
-    minium = actual_maximum * 0.7
+    minium = actual_maximum * 0.6
     ## Assuming users will not want a minimum price much lower than their max - use 70% of max
     if minium < total_rent <= actual_maximum:
         return True
@@ -75,7 +75,7 @@ def main():
     driver = webdriver.Chrome()
     driver.set_page_load_timeout(4.5)
     driver.minimize_window()
-    # import pdb; pdb.set_trace()
+    import pdb; pdb.set_trace()
     try:                ## Need this as rightmove website spends ages downloading/running
         driver.get(url) ## scripts on page load, long delays - this triggers
     except:             ## timeout exception and just continues.
@@ -120,24 +120,25 @@ def main():
                     properties.append(prop.serialize())
                     print(json.dumps(prop.serialize(), indent=4))
                 else:
-                    print(f'\tProperty out of range at {dist_string}')
+                    print(f'\tProperty out of range at {dist_string}.')
             else:
-                print(f'\t{price_text} is out of budget with for a {bed_count} property.')
+                print(f'\tThis {bed_count} bed property is out of budget range at {price_text}.')
 
         ## go to next page
         driver.find_element_by_css_selector('button[data-test="pagination-next"]').click()
         time.sleep(2)
 
     ## Write our data to a json file.
-    with open('scraped_data.json','w') as f:
-        data = {'ResultCount':len(properties)}
-        data['search_paramaters'] = {
-                                    'minimumBeds': minBeds,
-                                    'maximumBeds': maxBeds,
-                                    'maxRadius': max_radius,
-                                    'maxPricePPPCM' : max_price
-                                    }
-        data['Properties'] = properties
+    fname = f'properties{len(properties)}_minBed={minBeds}_maxBed={maxBeds}_radius={max_radius}pcm={int(max_price)}'.replace('.','pt') + '.json'
+    with open(fname, 'w') as f:
+        # data = {'ResultCount':len(properties)}
+        # data['search_paramaters'] = {
+        #                             'minimumBeds': minBeds,
+        #                             'maximumBeds': maxBeds,
+        #                             'maxRadius': max_radius,
+        #                             'maxPricePPPCM' : max_price
+        #                             }
+        data = properties
         json.dump(data, f, sort_keys=True, indent=4)
 
 
