@@ -69,6 +69,7 @@ def main():
     url, max_price = get_search_url()
     driver = webdriver.Chrome()
     driver.set_page_load_timeout(4.5)
+    driver.minimize_window()
 
     try:
         driver.get(url)
@@ -89,7 +90,7 @@ def main():
         search_results = driver.find_element_by_class_name('l-searchResults')
         items = search_results.find_elements_by_class_name('propertyCard')
         for item in items:
-            x = item.location_once_scrolled_into_view
+            # x = item.location_once_scrolled_into_view
             price_text = item.find_element_by_class_name('propertyCard-priceValue').text
             monthly_rent = price_to_number(price_text)
             link = item.find_element_by_partial_link_text(price_text).get_attribute('href')
@@ -108,7 +109,10 @@ def main():
 
                 prop = Property(bed_count, monthly_rent, link, agent, addr, postcode, floorplan)
                 properties.append(prop.serialize())
-                print(json.dumps(prop.serialize(), ensure_ascii=False, indent=4))
+                print(json.dumps(prop.serialize(), indent=4))
+
+            else:
+                print(f'{price_text} is out of budget with for a {bed_count} property.')
 
         ## go to next page
         driver.find_element_by_css_selector('button[data-test="pagination-next"]').click()
