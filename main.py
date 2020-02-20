@@ -2,7 +2,7 @@ import sys, json, time
 import re
 import requests
 
-from property_class import Property
+from classes import Property
 from selenium import webdriver
 
 def in_budget(bed_count, max_per_person, total_rent):
@@ -75,7 +75,7 @@ def main():
     driver = webdriver.Chrome()
     driver.set_page_load_timeout(4.5)
     driver.minimize_window()
-    import pdb; pdb.set_trace()
+    # import pdb; pdb.set_trace()
     try:                ## Need this as rightmove website spends ages downloading/running
         driver.get(url) ## scripts on page load, long delays - this triggers
     except:             ## timeout exception and just continues.
