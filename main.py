@@ -8,8 +8,8 @@ from selenium import webdriver
 def in_budget(bed_count, max_per_person, total_rent):
     actual_maximum = bed_count * max_per_person
     minium = actual_maximum * 0.6
-    ## Assuming users will not want a minimum price much lower than their max - use 70% of max
-    if minium < total_rent <= actual_maximum:
+    ## Assuming users will not want a minimum price much lower than their max - use 60% of max
+    if minium <= total_rent <= actual_maximum:
         return True
 
 def closest_is_higher(number, the_list='prices'):
@@ -54,6 +54,8 @@ insId=1&radius={miles}&maxPrice={max_price}&minBedrooms={min_beds}\
     return template, float(max_price_pppcm), float(radius), min_beds, max_beds
 
 def price_to_number(pricetext):
+    '''Input e.g. "£1,740.99 p.c.m" 
+       Output 1740.99 (dtype=float)'''
     return float(re.sub('[^\d.]', '', pricetext))
 
 def floorplan_available(link):
@@ -104,7 +106,7 @@ def main():
             distance_num = float(re.sub('[^\d.]', '', distance))
             bed_count = int(item.find_element_by_class_name('propertyCard-link').text.split('bed')[0])
 
-            ## Dont bother collecting data on properties out of budget
+            ## Dont bother collecting data on properties out of budget range
             if in_budget(bed_count, max_price, monthly_rent):
                 if distance_num <= max_radius:
                     fulladdress = item.find_element_by_class_name('propertyCard-address').text
