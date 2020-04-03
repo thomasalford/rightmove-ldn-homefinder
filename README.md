@@ -11,4 +11,4 @@ The program takes some inputs from the user such as minimum and maximum number o
 Outputs a .JSON file to the current directory which can be used to write to a csv file etc. When I was using an earlier version of this tool, and a relatively large number of appropriate links had been extracted, I used the `random` and `webbrowser` libraries to open up samples of ~15 webpages to view and ultimately discard.
 
 External libraries:
-Requires Selenium, and chromedriver.exe to be in `sys.path` as well as the requests library.
+Requires Selenium, and chromedriver.exe to be in `$PATH` as well as the requests library.
